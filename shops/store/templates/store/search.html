@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Please Provide Your Location to find Nearby Shops</h1>
+    <form id="searchForm" action="/store/search/" method="POST">
+        {% csrf_token %}
+        <input id="location" type="text" name="location">
+        <input id="getlocationbtn" type="button" value="Get location" onclick="geolocationCoordinates()" name="getlocationbtn"> 
+        <input id="searchBtn" type="button" value="Search"> 
+    </form>
+
+    {% for shop in shops %}
+    <h1>{{shop.name}}</h1>
+    <h2>{{shop.distance}}</h2>
+
+    {%endfor%}
+
+    <script>
+        const locationInput = document.getElementById('location');
+        const getLocationBtn = document.getElementById('getlocationbtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchForm = document.getElementById('searchForm');
+
+        function geolocationCoordinates(){
+            navigator.geolocation.getCurrentPosition(
+                function(position){
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    console.log(latitude);
+                    console.log(longitude);
+                    locationInput.value = `${latitude}, ${longitude}`;               
+                },
+                function(error){
+                    console.error('Error Getting Location',error.message);
+                }
+            );
+        }
+
+        // Add event listener to the search button
+        searchBtn.addEventListener('click', function() {
+            // Submit the form when search button is clicked
+            searchForm.submit();
+        });
+    </script>
+    {% for shop,distance in shops.items %}
+    <h1>{{shop}}</h1>
+    <h2>{{distance}}KM</h2>
+    {%endfor%}
+</body>
+</html>
